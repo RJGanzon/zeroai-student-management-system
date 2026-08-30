@@ -2,12 +2,13 @@
 
 A Spring Boot REST API for managing students, books, and courses. Built while learning JPA relationships, so the focus is on how the three entities connect rather than on features.
 
-**No AI was used in this project. 0% AI, 100% written by hand.**
+**No AI was used in this project. 0% AI, 100% handwritten.**
 
 ## Relationships
 
 - A student can own many books. A book belongs to at most one student (one-to-many).
 - A student can enroll in many courses, and a course can have many students (many-to-many).
+<img width="749" height="738" alt="Untitled (1)" src="https://github.com/user-attachments/assets/79910f59-9820-4166-ad7b-e6f6c017ee15" />
 
 ## Tech
 
