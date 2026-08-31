@@ -1,6 +1,7 @@
 package com.week9.study.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class StudentEntity {
     Long id;
 
     @NotBlank(message = "Student name is mandatory")
+    @Min(value = 5, message = "Name of a student cannot be less than 5 characters!")
     String name;
 
     @OneToMany(mappedBy = "student")
