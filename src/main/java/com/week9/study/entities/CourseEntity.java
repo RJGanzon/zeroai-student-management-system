@@ -1,6 +1,7 @@
 package com.week9.study.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.HashSet;
@@ -15,7 +16,10 @@ import java.util.Set;
 @Table(name="courses")
 public class CourseEntity {
     @Id
+    @NotBlank(message = "Course Code is mandatory")
     String code;
+
+    @NotBlank(message = "Book title is mandatory")
     String title;
     @ManyToMany(mappedBy = "courses")
     @EqualsAndHashCode.Exclude

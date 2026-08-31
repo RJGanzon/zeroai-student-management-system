@@ -1,6 +1,7 @@
 package com.week9.study.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.HashSet;
@@ -17,6 +18,8 @@ public class StudentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @NotBlank(message = "Student name is mandatory")
     String name;
 
     @OneToMany(mappedBy = "student")
