@@ -10,6 +10,7 @@ import com.week9.study.entities.BookEntity;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.entities.StudentEntity;
 import com.week9.study.exception.book.BookNotFoundException;
+import com.week9.study.exception.book.BookOwnershipNotFoundException;
 import com.week9.study.exception.course.CourseNotFoundException;
 import com.week9.study.exception.student.StudentNotFoundException;
 import com.week9.study.mapper.Mapper;
@@ -125,7 +126,7 @@ public class StudentServiceImpl implements StudentService {
         BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
         StudentEntity owner = bookEntity.getStudent();
         if (owner == null || !Objects.equals(owner.getId(), id)) {
-            throw new EntityNotFoundException("Student Id does not match Ownership or Book does not have an owner");
+            throw new BookOwnershipNotFoundException(id, isbn);
         }
         bookEntity.setStudent(null);
     }
