@@ -16,4 +16,10 @@ public class CourseExceptionHandler {
     public Map<String, String> handleCourseNotFoundException(CourseNotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UnenrollStudentException.class)
+    public Map<String, String> handleUnenrollStudentException(UnenrollStudentException ex) {
+        return Map.of("error", ex.getMessage());
+    }
 }
