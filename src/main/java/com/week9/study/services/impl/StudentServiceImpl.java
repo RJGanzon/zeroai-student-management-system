@@ -9,6 +9,9 @@ import com.week9.study.dto.summaries.StudentSummaryDto;
 import com.week9.study.entities.BookEntity;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.entities.StudentEntity;
+import com.week9.study.exception.book.BookNotFoundException;
+import com.week9.study.exception.course.CourseNotFoundException;
+import com.week9.study.exception.student.StudentNotFoundException;
 import com.week9.study.mapper.Mapper;
 import com.week9.study.mapper.impl.BookMapperImpl;
 import com.week9.study.mapper.impl.summaries.BookSummaryMapperImpl;
@@ -82,7 +85,7 @@ public class StudentServiceImpl implements StudentService {
     public StudentSummaryDto updateStudent(Long id, StudentSummaryDto studentSummaryDto) {
         //Right a custom Exception for this after
         StudentEntity studentEntity = studentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Student Not Found"));
+                .orElseThrow(() -> new StudentNotFoundException(id));
 
         StudentEntity updatedStudentEntity = studentRepository
                 .save(studentSummaryDtoMapper.updateEntity(studentSummaryDto, studentEntity));
@@ -92,7 +95,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void deleteStudent(Long id) {
         StudentEntity studentEntity = studentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Student Not Found"));
+                .orElseThrow(() -> new StudentNotFoundException(id));
 
         studentEntity.getBooks().forEach(bookEntity -> bookEntity.setStudent(null));
         studentEntity.getCourses().clear();
@@ -102,9 +105,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public BookDto ownBook(Long id, String isbn) {
         if (!studentRepository.existsById(id)){
-            throw new EntityNotFoundException("Student does not Exist");
+            throw new StudentNotFoundException(id);
         }
-        BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new EntityNotFoundException("Book not Found"));
+        BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
         StudentEntity student = studentRepository.getReferenceById(id);
         bookEntity.setStudent(student);
         return bookMapper.mapTo(bookEntity);
@@ -113,13 +116,13 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional(readOnly = true)
     public List<BookSummaryDto> fetchOwnerBooks(Long id) {
-        StudentEntity studentFound = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Student does not exist"));
+        StudentEntity studentFound = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
         return studentFound.getBooks().stream().map(bookSummaryMapper::mapTo).toList();
     }
 
     @Override
     public void revokeOwnership(Long id, String isbn) {
-        BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new EntityNotFoundException("Book not Found"));
+        BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
         StudentEntity owner = bookEntity.getStudent();
         if (owner == null || !Objects.equals(owner.getId(), id)) {
             throw new EntityNotFoundException("Student Id does not match Ownership or Book does not have an owner");
@@ -132,7 +135,7 @@ public class StudentServiceImpl implements StudentService {
         if (!courseRepository.existsById(code)){
             throw new EntityNotFoundException("Course does not Exist");
         }
-        StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Student not found"));
+        StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
         CourseEntity courseEntity = courseRepository.getReferenceById(code);
         studentEntity.getCourses().add(courseEntity);
         return studentDtoMapper.mapTo(studentEntity);
@@ -140,15 +143,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<CourseSummaryDto> fetchStudentCourses(Long id) {
-        StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Student not found"));
+        StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
         return studentEntity.getCourses().stream().map(courseSummaryMapper::mapTo).toList();
     }
 
     @Override
     public void unenrollStudent(Long id, String code) {
-        if (!courseRepository.existsById(code)) throw new EntityNotFoundException("Code not found");
+        if (!courseRepository.existsById(code)) throw new CourseNotFoundException(code);
         CourseEntity courseEntity = courseRepository.getReferenceById(code);
-        StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Student Not found"));
+        StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
 
         Set<CourseEntity> courseEntityList = studentEntity.getCourses();
         if (!courseEntityList.remove(courseEntity)) {

@@ -4,6 +4,7 @@ import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
 import com.week9.study.dto.summaries.StudentSummaryDto;
 import com.week9.study.entities.CourseEntity;
+import com.week9.study.exception.course.CourseNotFoundException;
 import com.week9.study.mapper.Mapper;
 import com.week9.study.mapper.impl.summaries.StudentSummaryMapperImpl;
 import com.week9.study.repositories.CourseRepository;
@@ -53,7 +54,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseSummaryDto updateCourse(String code, CourseSummaryDto courseSummaryDto) {
         CourseEntity courseEntity = courseRepository.findById(code)
-                .orElseThrow(() -> new EntityNotFoundException("Course Does not Exist"));
+                .orElseThrow(() -> new CourseNotFoundException(code));
         CourseEntity updatedCourseEntity = courseRepository
                 .save(courseSummaryDtoMapper.updateEntity(courseSummaryDto, courseEntity));
         return courseSummaryDtoMapper.mapTo(updatedCourseEntity);
@@ -62,14 +63,14 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void deleteCourse(String code) {
         CourseEntity courseEntity = courseRepository.findById(code)
-                .orElseThrow(() -> new EntityNotFoundException("Course Does not Exist"));
+                .orElseThrow(() -> new CourseNotFoundException(code));
         courseEntity.getStudents().forEach(studentEntity -> studentEntity.getCourses().remove(courseEntity));
         courseRepository.delete(courseEntity);
     }
 
     @Override
     public List<StudentSummaryDto> enrolledStudents(String code) {
-        CourseEntity courseEntity =  courseRepository.findById(code).orElseThrow(() -> new EntityNotFoundException("Course not Found"));
+        CourseEntity courseEntity =  courseRepository.findById(code).orElseThrow(() -> new CourseNotFoundException(code));
         return courseEntity.getStudents().stream().map(studentSummaryMapper::mapTo).toList();
     }
 }

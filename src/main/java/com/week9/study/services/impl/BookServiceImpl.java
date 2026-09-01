@@ -5,6 +5,7 @@ import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.StudentSummaryDto;
 import com.week9.study.entities.BookEntity;
 import com.week9.study.entities.StudentEntity;
+import com.week9.study.exception.book.BookNotFoundException;
 import com.week9.study.mapper.Mapper;
 import com.week9.study.mapper.impl.summaries.StudentSummaryMapperImpl;
 import com.week9.study.repositories.BookRepository;
@@ -56,7 +57,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookSummaryDto updateBook(String isbn, BookSummaryDto bookSummaryDto) {
         BookEntity bookEntity = bookRepository.findById(isbn)
-                .orElseThrow(() -> new EntityNotFoundException("Book Not Found"));
+                .orElseThrow(() -> new BookNotFoundException(isbn));
         BookEntity updatedBookEntity = bookRepository
                 .save(bookSummaryDtoMapper.updateEntity(bookSummaryDto, bookEntity));
         return bookSummaryDtoMapper.mapTo(updatedBookEntity);
@@ -70,7 +71,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public Optional<StudentSummaryDto> fetchOwner(String isbn) {
-        BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new EntityNotFoundException("Book Not Found"));
+        BookEntity bookEntity = bookRepository.findById(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
         return Optional.ofNullable(bookEntity.getStudent()).map(studentSummaryMapper::mapTo);
     }
 }
