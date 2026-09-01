@@ -16,4 +16,10 @@ public class BookExceptionHandler {
     public Map<String, String> handleBookNotFoundException(BookNotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(BookOwnershipNotFoundException.class)
+    public Map<String, String> handleBookOwnershipNotFoundException(BookOwnershipNotFoundException ex) {
+        return Map.of("Forbidden", ex.getMessage());
+    }
 }

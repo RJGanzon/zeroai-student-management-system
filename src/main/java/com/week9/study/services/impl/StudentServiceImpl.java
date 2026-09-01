@@ -133,7 +133,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto enrolLStudent(Long id, String code) {
         if (!courseRepository.existsById(code)){
-            throw new EntityNotFoundException("Course does not Exist");
+            throw new CourseNotFoundException(code);
         }
         StudentEntity studentEntity = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
         CourseEntity courseEntity = courseRepository.getReferenceById(code);
