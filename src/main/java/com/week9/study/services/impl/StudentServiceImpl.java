@@ -1,7 +1,6 @@
 package com.week9.study.services.impl;
 
 import com.week9.study.dto.BookDto;
-import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.StudentDto;
 import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
@@ -12,6 +11,7 @@ import com.week9.study.entities.StudentEntity;
 import com.week9.study.exception.book.BookNotFoundException;
 import com.week9.study.exception.book.BookOwnershipNotFoundException;
 import com.week9.study.exception.course.CourseNotFoundException;
+import com.week9.study.exception.course.UnenrollStudentException;
 import com.week9.study.exception.student.StudentNotFoundException;
 import com.week9.study.mapper.Mapper;
 import com.week9.study.mapper.impl.BookMapperImpl;
@@ -21,7 +21,6 @@ import com.week9.study.repositories.BookRepository;
 import com.week9.study.repositories.CourseRepository;
 import com.week9.study.repositories.StudentRepository;
 import com.week9.study.services.StudentService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,7 +155,7 @@ public class StudentServiceImpl implements StudentService {
 
         Set<CourseEntity> courseEntityList = studentEntity.getCourses();
         if (!courseEntityList.remove(courseEntity)) {
-            throw new EntityNotFoundException("Student is not enrolled in the given course");
+            throw new UnenrollStudentException(id, code);
         }
     }
 }
