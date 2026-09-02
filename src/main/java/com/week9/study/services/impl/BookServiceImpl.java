@@ -4,13 +4,11 @@ import com.week9.study.dto.BookDto;
 import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.StudentSummaryDto;
 import com.week9.study.entities.BookEntity;
-import com.week9.study.entities.StudentEntity;
 import com.week9.study.exception.book.BookNotFoundException;
 import com.week9.study.mapper.Mapper;
 import com.week9.study.mapper.impl.summaries.StudentSummaryMapperImpl;
 import com.week9.study.repositories.BookRepository;
 import com.week9.study.services.BookService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +40,7 @@ public class BookServiceImpl implements BookService {
         return bookDtoMapper.mapTo(savedBookEntity);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookSummaryDto> fetchAllBooks() {
         return bookRepository.findAll().stream()
