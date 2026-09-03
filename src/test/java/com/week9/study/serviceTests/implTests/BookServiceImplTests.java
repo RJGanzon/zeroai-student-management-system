@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -71,7 +72,7 @@ public class BookServiceImplTests {
 
     //Save a Book
     @Test
-    @DisplayName("Save Book Successful")
+    @DisplayName("Save a Book Successfully")
     public void saveBook(){
         //mock methods
         when(this.bookSummaryDtoMapper.mapFrom(bookSummaryDto)).thenReturn(bookEntity);
@@ -88,7 +89,7 @@ public class BookServiceImplTests {
 
     //Fetch All Books Test
     @Test
-    @DisplayName("Books Fetch Successful")
+    @DisplayName("Books Fetch Successfully")
     public void fetchAllBooksTest() {
         //mock methods
         when(this.bookRepository.findAll()).thenReturn(bookEntityList);
@@ -101,5 +102,26 @@ public class BookServiceImplTests {
         assertThat(result, equalTo(bookSummaryDtoList));
     }
 
+    @Test
+    @DisplayName("Fetch a book successfully ")
+    public void fetchBookTest() {
+        //mock methods
+        when(this.bookRepository.findById(bookEntity.getIsbn())).thenReturn(Optional.of(bookEntity));
+        when(this.bookDtoMapper.mapTo(bookEntity)).thenReturn(bookDto);
+        //call actual method
+        Optional<BookDto> result = bookServiceImpl.fetchBook(bookEntity.getIsbn());
+        //asserts
+        assertThat(result, equalTo(Optional.of(bookDto)));
+    }
 
+    @Test
+    @DisplayName("Book not found during fetch returns Optional.empty()")
+    public void fetchBookNullTest() {
+        //mock methods
+        when(this.bookRepository.findById("invalid_isbn")).thenReturn(Optional.empty());
+        //call actual method
+        Optional<BookDto> result = bookServiceImpl.fetchBook("invalid_isbn");
+        //asserts
+        assertThat(result, equalTo(Optional.empty()));
+    }
 }
