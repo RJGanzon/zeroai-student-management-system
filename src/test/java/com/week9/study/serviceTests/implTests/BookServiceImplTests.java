@@ -124,4 +124,11 @@ public class BookServiceImplTests {
         //asserts
         assertThat(result, equalTo(Optional.empty()));
     }
+
+    @Test
+    @DisplayName("Delete a book successful")
+    public void deleteBookTest() {
+        bookServiceImpl.deleteBook(bookEntity.getIsbn());
+        verify(bookRepository).deleteById(bookEntity.getIsbn());
+    }
 }
