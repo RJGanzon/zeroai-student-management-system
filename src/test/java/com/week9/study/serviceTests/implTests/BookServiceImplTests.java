@@ -57,6 +57,8 @@ public class BookServiceImplTests {
 
     @BeforeEach
     void setup() {
+        bookServiceImpl = new BookServiceImpl(bookDtoMapper, bookSummaryDtoMapper, bookRepository, studentSummaryMapper);
+
         studentEntity = StudentEntity.builder()
                 .id(Long.valueOf(1))
                 .name("Ralph Justine T Ganzon")
@@ -68,7 +70,6 @@ public class BookServiceImplTests {
                 .name("Ralph Justine T Ganzon")
                 .build();
 
-        bookServiceImpl = new BookServiceImpl(bookDtoMapper, bookSummaryDtoMapper, bookRepository, studentSummaryMapper);
         bookEntity = BookEntity.builder()
                 .isbn("978-1408856772")
                 .title("Harry Potter")
