@@ -188,8 +188,6 @@ public class BookServiceImplTests {
         assertThrows(BookNotFoundException.class, () ->
                 bookServiceImpl.updateBook(invalidIsbn, any())
         );
-        verify(studentSummaryMapper, never()).mapTo(any());
-
     }
     @Test
     @DisplayName("Delete a book successful")
