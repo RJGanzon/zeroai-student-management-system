@@ -1,8 +1,6 @@
 package com.week9.study.serviceTests.implTests;
 
-import com.week9.study.dto.BookDto;
 import com.week9.study.dto.CourseDto;
-import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.mapper.impl.CourseMapperImpl;
@@ -122,6 +120,22 @@ public class CourseServiceImplTests {
         assertThat(result, equalTo(Optional.of(courseDto)));
     }
 
+    @Test
+    @DisplayName("Course not found with fetchCourse returns Optional.empty()")
+    public void fetchCourseNullTest() {
+        //mock methods
+        when(this.courseRepository.findById("invalid_code")).thenReturn(Optional.empty());
+        //call actual method
+        Optional<CourseDto> result = courseServiceImpl.fetchCourse("invalid_code");
+        //asserts
+        assertThat(result, equalTo(Optional.empty()));
+    }
 
+    @Test
+    @DisplayName("Delete a course successful")
+    public void deleteCourseTest() {
+        courseServiceImpl.deleteCourse(courseEntity.getCode());
+        verify(courseRepository).deleteById(courseEntity.getCode());
+    }
 
 }
