@@ -3,6 +3,8 @@ package com.week9.study.serviceTests.implTests;
 import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
 import com.week9.study.entities.CourseEntity;
+import com.week9.study.entities.StudentEntity;
+import com.week9.study.exception.course.CourseNotFoundException;
 import com.week9.study.mapper.impl.CourseMapperImpl;
 import com.week9.study.mapper.impl.summaries.CourseSummaryMapperImpl;
 import com.week9.study.mapper.impl.summaries.StudentSummaryMapperImpl;
@@ -17,11 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +35,7 @@ public class CourseServiceImplTests {
     private CourseEntity courseEntity;
     private CourseSummaryDto courseSummaryDto;
     private CourseDto courseDto;
+    private StudentEntity studentEntity;
 
     private List<CourseEntity> courseEntityList;
     private List<CourseSummaryDto> courseSummaryDtoList;
@@ -71,6 +76,16 @@ public class CourseServiceImplTests {
                 .title("Professional Track 6")
                 .students(null)
                 .build();
+
+        studentEntity = StudentEntity.builder()
+                .id(Long.valueOf(1))
+                .name("Ralph Justine T Ganzon")
+                .books(null)
+                .courses(null)
+                .build();
+
+        courseEntity.setStudents(Set.of(studentEntity));
+        studentEntity.setCourses(Set.of(courseEntity));
 
         courseSummaryDtoList = List.of(courseSummaryDto, courseSummaryDto);
         courseEntityList = List.of(courseEntity, courseEntity);
@@ -129,6 +144,47 @@ public class CourseServiceImplTests {
         Optional<CourseDto> result = courseServiceImpl.fetchCourse("invalid_code");
         //asserts
         assertThat(result, equalTo(Optional.empty()));
+    }
+
+    @Test
+    @DisplayName("Update a course successful")
+    public void updateCourseTest() {
+        CourseEntity updatedCourseEntity = CourseEntity.builder()
+                .code("978-1408856772")
+                .title("Artificial Intelligence")
+                .students(Set.of(studentEntity))
+                .build();
+        CourseSummaryDto updatedCourseSummaryDto = CourseSummaryDto.builder()
+                .code("978-1408856772")
+                .title("Artificial Intelligence")
+                .build();
+
+        //Mock methods
+        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.of(courseEntity));
+        when(this.courseSummaryDtoMapper.updateEntity(updatedCourseSummaryDto, courseEntity)).thenReturn(updatedCourseEntity);
+        when(this.courseRepository.save(updatedCourseEntity)).thenReturn(updatedCourseEntity);
+        when(this.courseSummaryDtoMapper.mapTo(updatedCourseEntity)).thenReturn(updatedCourseSummaryDto);
+
+        //call actual method
+        CourseSummaryDto result = courseServiceImpl.updateCourse(courseEntity.getCode(), updatedCourseSummaryDto);
+
+        //assert
+        assertThat(result, equalTo(updatedCourseSummaryDto));
+
+    }
+
+    @Test
+    @DisplayName("The course to be updated does not exist exception test")
+    public void updateCourseNotExistExceptionTest() {
+        String invalidCode = "PTF05";
+
+        //mock methods
+        when(this.courseRepository.findById(invalidCode)).thenReturn(Optional.empty());
+
+        //asserts
+        assertThrows(CourseNotFoundException.class, () ->
+                courseServiceImpl.updateCourse(invalidCode, any())
+        );
     }
 
     @Test
