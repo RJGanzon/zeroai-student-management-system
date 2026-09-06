@@ -1,5 +1,6 @@
 package com.week9.study.serviceTests.implTests;
 
+import com.week9.study.dto.BookDto;
 import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -107,5 +109,19 @@ public class CourseServiceImplTests {
         //asserts
         assertThat(result, equalTo(courseSummaryDtoList));
     }
+
+    @Test
+    @DisplayName("Fetch a course successfully ")
+    public void fetchCourseTest() {
+        //mock methods
+        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.of(courseEntity));
+        when(this.courseDtoMapper.mapTo(courseEntity)).thenReturn(courseDto);
+        //call actual method
+        Optional<CourseDto> result = courseServiceImpl.fetchCourse(courseEntity.getCode());
+        //asserts
+        assertThat(result, equalTo(Optional.of(courseDto)));
+    }
+
+
 
 }
