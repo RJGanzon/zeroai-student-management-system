@@ -1,6 +1,5 @@
 package com.week9.study.serviceTests.implTests;
 
-import com.week9.study.dto.BookDto;
 import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
 import com.week9.study.entities.CourseEntity;
