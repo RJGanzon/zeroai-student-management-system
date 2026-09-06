@@ -1,6 +1,7 @@
 package com.week9.study.serviceTests.implTests;
 
 import com.week9.study.dto.CourseDto;
+import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.mapper.impl.CourseMapperImpl;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.verify;
@@ -28,6 +31,9 @@ public class CourseServiceImplTests {
     private CourseEntity courseEntity;
     private CourseSummaryDto courseSummaryDto;
     private CourseDto courseDto;
+
+    private List<CourseEntity> courseEntityList;
+    private List<CourseSummaryDto> courseSummaryDtoList;
 
     //Mock Constructors
 
@@ -65,6 +71,9 @@ public class CourseServiceImplTests {
                 .title("Professional Track 6")
                 .students(null)
                 .build();
+
+        courseSummaryDtoList = List.of(courseSummaryDto, courseSummaryDto);
+        courseEntityList = List.of(courseEntity, courseEntity);
     }
 
     //Save a Course
@@ -82,6 +91,21 @@ public class CourseServiceImplTests {
         //asserts
         assertThat(result,equalTo(courseDto));
         verify(this.courseRepository).save(courseEntity);
+    }
+
+    //Fetch All Courses Test
+    @Test
+    @DisplayName("Courses Fetch Successfully")
+    public void fetchAllCoursesTest() {
+        //mock methods
+        when(this.courseRepository.findAll()).thenReturn(courseEntityList);
+        when(this.courseSummaryDtoMapper.mapTo(courseEntity)).thenReturn(courseSummaryDto);
+
+        //Call actual method
+        List<CourseSummaryDto> result = courseServiceImpl.fetchAllCourses();
+
+        //asserts
+        assertThat(result, equalTo(courseSummaryDtoList));
     }
 
 }
