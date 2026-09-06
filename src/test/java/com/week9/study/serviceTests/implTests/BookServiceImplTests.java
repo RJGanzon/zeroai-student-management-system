@@ -150,6 +150,33 @@ public class BookServiceImplTests {
     }
 
     @Test
+    @DisplayName("Update a book successful")
+    public void updateBookTest() {
+        BookEntity updatedBookEntity = BookEntity.builder()
+                .isbn("978-1408856772")
+                .title("Dune")
+                .student(studentEntity)
+                .build();;
+        BookSummaryDto updatedBookSummaryDto = BookSummaryDto.builder()
+                .isbn("978-1408856772")
+                .title("Dune")
+                .build();
+
+        //Mock methods
+        when(this.bookRepository.findById(bookEntity.getIsbn())).thenReturn(Optional.of(bookEntity));
+        when(this.bookSummaryDtoMapper.updateEntity(updatedBookSummaryDto, bookEntity)).thenReturn(updatedBookEntity);
+        when(this.bookRepository.save(updatedBookEntity)).thenReturn(updatedBookEntity);
+        when(this.bookSummaryDtoMapper.mapTo(updatedBookEntity)).thenReturn(updatedBookSummaryDto);
+
+        //call actual method
+        BookSummaryDto result = bookServiceImpl.updateBook(bookEntity.getIsbn(), updatedBookSummaryDto);
+
+        //assert
+        assertThat(result, equalTo(updatedBookSummaryDto));
+
+    }
+
+    @Test
     @DisplayName("Delete a book successful")
     public void deleteBookTest() {
         bookServiceImpl.deleteBook(bookEntity.getIsbn());
