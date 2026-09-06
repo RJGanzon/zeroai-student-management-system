@@ -156,7 +156,7 @@ public class BookServiceImplTests {
                 .isbn("978-1408856772")
                 .title("Dune")
                 .student(studentEntity)
-                .build();;
+                .build();
         BookSummaryDto updatedBookSummaryDto = BookSummaryDto.builder()
                 .isbn("978-1408856772")
                 .title("Dune")
@@ -176,6 +176,21 @@ public class BookServiceImplTests {
 
     }
 
+    @Test
+    @DisplayName("The book to be updated does not exist exception test")
+    public void updateBookNotExistExceptionTest() {
+        String invalidIsbn = "3431";
+
+        //mock methods
+        when(this.bookRepository.findById(invalidIsbn)).thenReturn(Optional.empty());
+
+        //asserts
+        assertThrows(BookNotFoundException.class, () ->
+                bookServiceImpl.updateBook(invalidIsbn, any())
+        );
+        verify(studentSummaryMapper, never()).mapTo(any());
+
+    }
     @Test
     @DisplayName("Delete a book successful")
     public void deleteBookTest() {
