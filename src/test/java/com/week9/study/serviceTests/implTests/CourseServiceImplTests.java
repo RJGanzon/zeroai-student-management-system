@@ -74,7 +74,7 @@ public class CourseServiceImplTests {
         //mock methods
         when(this.courseSummaryDtoMapper.mapFrom(courseSummaryDto)).thenReturn(courseEntity);
         when(this.courseRepository.save(courseEntity)).thenReturn(courseEntity);
-        when(this.courseDtoMapper.mapTo(courseEntity)).thenReturn(courseSummaryDto);
+        when(this.courseDtoMapper.mapTo(courseEntity)).thenReturn(courseDto);
 
         //Call actual method
         CourseDto result = courseServiceImpl.saveCourse(courseSummaryDto);
