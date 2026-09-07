@@ -2,6 +2,7 @@ package com.week9.study.serviceTests.implTests;
 
 import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
+import com.week9.study.dto.summaries.StudentSummaryDto;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.entities.StudentEntity;
 import com.week9.study.exception.course.CourseNotFoundException;
@@ -37,9 +38,11 @@ public class CourseServiceImplTests {
     private CourseSummaryDto courseSummaryDto;
     private CourseDto courseDto;
     private StudentEntity studentEntity;
+    private StudentSummaryDto studentSummaryDto;
 
     private List<CourseEntity> courseEntityList;
     private List<CourseSummaryDto> courseSummaryDtoList;
+    private List<StudentSummaryDto> studentSummaryList;
 
     //Mock Constructors
 
@@ -84,12 +87,17 @@ public class CourseServiceImplTests {
                 .books(null)
                 .courses(null)
                 .build();
+        studentSummaryDto = StudentSummaryDto.builder()
+                .id(Long.valueOf(1))
+                .name("Ralph Justine T Ganzon")
+                .build();
 
         courseEntity.setStudents(new HashSet<>(Set.of(studentEntity)));
         studentEntity.setCourses(new HashSet<>(Set.of(courseEntity)));
 
         courseSummaryDtoList = List.of(courseSummaryDto, courseSummaryDto);
         courseEntityList = List.of(courseEntity, courseEntity);
+        studentSummaryList = List.of(studentSummaryDto);
     }
 
     //Save a Course
@@ -191,7 +199,7 @@ public class CourseServiceImplTests {
     @Test
     @DisplayName("Delete a course successful")
     public void deleteCourseTest() {
-        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.ofNullable(courseEntity));
+        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.of(courseEntity));
 
         courseServiceImpl.deleteCourse(courseEntity.getCode());
 
@@ -204,6 +212,25 @@ public class CourseServiceImplTests {
         String invalidCode = "PTF05";
         when(this.courseRepository.findById(invalidCode)).thenReturn(Optional.empty());
 
-        assertThrows(CourseNotFoundException.class, () -> courseServiceImpl.deleteCourse(courseEntity.getCode()));
+        assertThrows(CourseNotFoundException.class, () -> courseServiceImpl.deleteCourse(invalidCode));
+    }
+
+    @Test
+    @DisplayName("Fetch Enrolled Students")
+    public void fetchEnrolledStudentTest() {
+        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.of(courseEntity));
+        when(this.studentSummaryMapper.mapTo(studentEntity)).thenReturn(studentSummaryDto);
+
+        List<StudentSummaryDto> result = courseServiceImpl.enrolledStudents(courseEntity.getCode());
+        assertThat(result, equalTo(studentSummaryList));
+    }
+
+    @Test
+    @DisplayName("Fetch Enrolled Students No Entity Exception")
+    public void fetchEnrolledStudentTestNoEntityException() {
+        String invalidCode = "PTF05";
+        when(this.courseRepository.findById(invalidCode)).thenReturn(Optional.empty());
+
+        assertThrows(CourseNotFoundException.class, () -> courseServiceImpl.enrolledStudents(invalidCode));
     }
 }
