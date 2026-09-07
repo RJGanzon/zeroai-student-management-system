@@ -1,5 +1,6 @@
 package com.week9.study.dto;
 
+import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
 import lombok.*;
 
@@ -13,5 +14,6 @@ import java.util.Set;
 public class StudentDto {
     Long id;
     String name;
+    Set<BookSummaryDto> books;
     Set<CourseSummaryDto> courses;
 }

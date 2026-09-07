@@ -98,7 +98,7 @@ public class BookServiceImplTests {
     //Save a Book
     @Test
     @DisplayName("Save a Book Successfully")
-    public void saveBook(){
+    public void saveBookTest(){
         //mock methods
         when(this.bookSummaryDtoMapper.mapFrom(bookSummaryDto)).thenReturn(bookEntity);
         when(this.bookRepository.save(bookEntity)).thenReturn(bookEntity);

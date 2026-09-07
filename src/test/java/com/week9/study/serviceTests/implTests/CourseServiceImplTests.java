@@ -103,7 +103,7 @@ public class CourseServiceImplTests {
     //Save a Course
     @Test
     @DisplayName("Save a Course Successfully")
-    public void saveCourse(){
+    public void saveCourseTest(){
         //mock methods
         when(this.courseSummaryDtoMapper.mapFrom(courseSummaryDto)).thenReturn(courseEntity);
         when(this.courseRepository.save(courseEntity)).thenReturn(courseEntity);
