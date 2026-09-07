@@ -198,4 +198,12 @@ public class CourseServiceImplTests {
         assertThat(studentEntity.getCourses().contains(courseEntity), equalTo(false));
     }
 
+    @Test
+    @DisplayName("Delete a course No Entity Exception")
+    public void deleteCourseEntityExceptionTest() {
+        String invalidCode = "PTF05";
+        when(this.courseRepository.findById(invalidCode)).thenReturn(Optional.empty());
+
+        assertThrows(CourseNotFoundException.class, () -> courseServiceImpl.deleteCourse(courseEntity.getCode()));
+    }
 }
