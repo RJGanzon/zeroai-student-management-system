@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class BookServiceImplTests {
 
         bookEntityList = List.of(bookEntity, bookEntity);
         bookSummaryDtoList = List.of(bookSummaryDto, bookSummaryDto);
-        bookEntitySet = Set.of(bookEntity);
+        bookEntitySet = new HashSet<>(Set.of(bookEntity));
 
         studentEntity.setBooks(bookEntitySet);
         //Students
