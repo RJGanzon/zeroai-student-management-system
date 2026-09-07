@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -84,8 +85,8 @@ public class CourseServiceImplTests {
                 .courses(null)
                 .build();
 
-        courseEntity.setStudents(Set.of(studentEntity));
-        studentEntity.setCourses(Set.of(courseEntity));
+        courseEntity.setStudents(new HashSet<>(Set.of(studentEntity)));
+        studentEntity.setCourses(new HashSet<>(Set.of(courseEntity)));
 
         courseSummaryDtoList = List.of(courseSummaryDto, courseSummaryDto);
         courseEntityList = List.of(courseEntity, courseEntity);
@@ -187,12 +188,14 @@ public class CourseServiceImplTests {
         );
     }
 
-//    @Test
-//    @DisplayName("Delete a course successful")
-//    public void deleteCourseTest() {
-//        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.ofNullable(courseEntity));
-//        courseServiceImpl.deleteCourse(courseEntity.getCode());
-//        verify(courseRepository).deleteById(courseEntity.getCode());
-//    }
+    @Test
+    @DisplayName("Delete a course successful")
+    public void deleteCourseTest() {
+        when(this.courseRepository.findById(courseEntity.getCode())).thenReturn(Optional.ofNullable(courseEntity));
+
+        courseServiceImpl.deleteCourse(courseEntity.getCode());
+
+        assertThat(studentEntity.getCourses().contains(courseEntity), equalTo(false));
+    }
 
 }
