@@ -77,6 +77,7 @@ public class StudentServiceImplTests {
     private BookEntity bookEntity;
     private BookDto bookDto;
     private BookSummaryDto bookSummaryDto;
+    private List<BookSummaryDto> bookSummaryDtoList;
 
     private List<CourseEntity> courseEntityList;
     private List<CourseSummaryDto> courseSummaryDtoList;
@@ -142,12 +143,14 @@ public class StudentServiceImplTests {
                 .title("Harry Potter")
                 .build();
 
+
         courseEntity.setStudents(new HashSet<>(Set.of(studentEntity)));
         studentEntity.setCourses(new HashSet<>(Set.of(courseEntity)));
         studentEntity.setBooks(new HashSet<>(Set.of(bookEntity)));
         studentDto.setCourses(new HashSet<>(Set.of(courseSummaryDto)));
         studentDto.setBooks(new HashSet<>(Set.of(bookSummaryDto)));
 
+        bookSummaryDtoList = List.of(bookSummaryDto);
         courseSummaryDtoList = List.of(courseSummaryDto);
         courseEntityList = List.of(courseEntity);
         studentEntityList = List.of(studentEntity);
@@ -308,5 +311,25 @@ public class StudentServiceImplTests {
         when(this.bookRepository.findById(randomIsbn)).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundException.class, () -> studentServiceImpl.ownBook(studentEntity.getId(), randomIsbn));
+    }
+
+    @Test
+    @DisplayName("fetchOwnerBooks Successful")
+    public void fetchOwnerBooksTest() {
+        when(this.studentRepository.findById(studentEntity.getId())).thenReturn(Optional.of(studentEntity));
+        when(this.bookSummaryMapper.mapTo(bookEntity)).thenReturn(bookSummaryDto);
+
+        List<BookSummaryDto> result = studentServiceImpl.fetchOwnerBooks(studentEntity.getId());
+
+        assertThat(result, equalTo(bookSummaryDtoList));
+    }
+
+    @Test
+    @DisplayName("fetchOwnerBooks Student not found exception")
+    public void fetchOwnerBooksStudentNotFoundExceptionTest() {
+        Long anyId = 56L;
+        when(this.studentRepository.findById(anyId)).thenReturn(Optional.empty());
+
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.fetchOwnerBooks(anyId));
     }
 }
