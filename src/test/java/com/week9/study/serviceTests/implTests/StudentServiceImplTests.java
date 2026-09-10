@@ -1,5 +1,6 @@
 package com.week9.study.serviceTests.implTests;
 
+import com.week9.study.dto.BookDto;
 import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.StudentDto;
 import com.week9.study.dto.summaries.BookSummaryDto;
@@ -73,6 +74,7 @@ public class StudentServiceImplTests {
     private StudentSummaryDto studentSummaryDto;
     private StudentDto studentDto;
     private BookEntity bookEntity;
+    private BookDto bookDto;
     private BookSummaryDto bookSummaryDto;
 
     private List<CourseEntity> courseEntityList;
@@ -121,6 +123,12 @@ public class StudentServiceImplTests {
                 .isbn("978-1408856772")
                 .title("Harry Potter")
                 .student(studentEntity)
+                .build();
+
+        bookDto = BookDto.builder()
+                .isbn("978-1408856772")
+                .title("Harry Potter")
+                .studentId(1L)
                 .build();
 
         bookSummaryDto = BookSummaryDto.builder()
@@ -263,5 +271,23 @@ public class StudentServiceImplTests {
 
         assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.deleteStudent(invalidId)); }
 
+    @Test
+    @DisplayName("Own a book Successful")
+    public void ownBookTest() {
+        StudentEntity studentReference = StudentEntity.builder()
+                .id(studentEntity.getId())
+                .name(null)
+                .books(null)
+                .courses(null)
+                .build();
+        when(this.studentRepository.existsById(studentEntity.getId())).thenReturn(true);
+        when(this.bookRepository.findById(bookEntity.getIsbn())).thenReturn(Optional.of(bookEntity));
+        when(this.studentRepository.getReferenceById(studentEntity.getId())).thenReturn(studentReference);
+        when(this.bookMapper.mapTo(bookEntity)).thenReturn(bookDto);
+
+        BookDto result = studentServiceImpl.ownBook(studentEntity.getId(), bookEntity.getIsbn());
+
+        assertThat(result, equalTo(bookDto));
+    }
 
 }
