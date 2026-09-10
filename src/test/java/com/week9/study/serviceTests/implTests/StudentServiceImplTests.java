@@ -9,6 +9,7 @@ import com.week9.study.dto.summaries.StudentSummaryDto;
 import com.week9.study.entities.BookEntity;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.entities.StudentEntity;
+import com.week9.study.exception.book.BookNotFoundException;
 import com.week9.study.exception.student.StudentNotFoundException;
 import com.week9.study.mapper.impl.BookMapperImpl;
 import com.week9.study.mapper.impl.StudentMapperImpl;
@@ -290,4 +291,22 @@ public class StudentServiceImplTests {
         assertThat(result, equalTo(bookDto));
     }
 
+    @Test
+    @DisplayName("ownBook student id not found exception")
+    public void ownBookStudentNotFoundExceptionTest() {
+        Long randomId = 34L;
+        when(this.studentRepository.existsById(randomId)).thenReturn(false);
+
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.ownBook(randomId, bookEntity.getIsbn()));
+    }
+
+    @Test
+    @DisplayName("ownBook book id not found exception")
+    public void ownBookBookNotFoundExceptionTest() {
+        String randomIsbn = "43434-324234";
+        when(this.studentRepository.existsById(studentEntity.getId())).thenReturn(true);
+        when(this.bookRepository.findById(randomIsbn)).thenReturn(Optional.empty());
+
+        assertThrows(BookNotFoundException.class, () -> studentServiceImpl.ownBook(studentEntity.getId(), randomIsbn));
+    }
 }
