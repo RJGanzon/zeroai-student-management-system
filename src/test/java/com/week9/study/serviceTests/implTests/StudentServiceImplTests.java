@@ -10,6 +10,7 @@ import com.week9.study.entities.BookEntity;
 import com.week9.study.entities.CourseEntity;
 import com.week9.study.entities.StudentEntity;
 import com.week9.study.exception.book.BookNotFoundException;
+import com.week9.study.exception.book.BookOwnershipNotFoundException;
 import com.week9.study.exception.student.StudentNotFoundException;
 import com.week9.study.mapper.impl.BookMapperImpl;
 import com.week9.study.mapper.impl.StudentMapperImpl;
@@ -332,4 +333,47 @@ public class StudentServiceImplTests {
 
         assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.fetchOwnerBooks(anyId));
     }
+
+    @Test
+    @DisplayName("revokeOwnership Successful")
+    public void revokeOwnershipTest() {
+        when(this.bookRepository.findById(bookEntity.getIsbn())).thenReturn(Optional.of(bookEntity));
+        studentServiceImpl.revokeOwnership(studentEntity.getId(), bookEntity.getIsbn());
+        assertThat(bookEntity.getStudent(), equalTo(null));
+    }
+
+    @Test
+    @DisplayName("revokeOwnership book entity not found")
+    public void revokeOwnershipBookEntityException() {
+        String invalidIsbn = "f324i";
+        when(this.bookRepository.findById(invalidIsbn)).thenReturn(Optional.empty());
+        assertThrows(BookNotFoundException.class, () ->
+                studentServiceImpl.revokeOwnership(studentEntity.getId(), invalidIsbn));
+    }
+
+
+    @Test
+    @DisplayName("revokeOwnership book no owner")
+    public void revokeOwnershipBookNoOwnerException() {
+        bookEntity.setStudent(null);
+        when(this.bookRepository.findById(bookEntity.getIsbn())).thenReturn(Optional.of(bookEntity));
+        assertThrows(BookOwnershipNotFoundException.class, () ->
+                studentServiceImpl.revokeOwnership(studentEntity.getId(), bookEntity.getIsbn()));
+    }
+
+    @Test
+    @DisplayName("revokeOwnership book different owner")
+    public void revokeOwnershipBookDiffOwnerException() {
+        StudentEntity diffStudent = StudentEntity.builder()
+                .id(67L)
+                .name(null)
+                .books(null)
+                .courses(null)
+                .build();
+        bookEntity.setStudent(diffStudent);
+        when(this.bookRepository.findById(bookEntity.getIsbn())).thenReturn(Optional.of(bookEntity));
+        assertThrows(BookOwnershipNotFoundException.class, () ->
+                studentServiceImpl.revokeOwnership(studentEntity.getId(), bookEntity.getIsbn()));
+    }
+
 }
