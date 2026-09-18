@@ -1,7 +1,6 @@
 package com.week9.study.serviceTests.implTests;
 
 import com.week9.study.dto.BookDto;
-import com.week9.study.dto.CourseDto;
 import com.week9.study.dto.StudentDto;
 import com.week9.study.dto.summaries.BookSummaryDto;
 import com.week9.study.dto.summaries.CourseSummaryDto;
@@ -73,7 +72,6 @@ public class StudentServiceImplTests {
 
     private CourseEntity courseEntity;
     private CourseSummaryDto courseSummaryDto;
-    private CourseDto courseDto;
     private StudentEntity studentEntity;
     private StudentSummaryDto studentSummaryDto;
     private StudentDto studentDto;
@@ -82,7 +80,6 @@ public class StudentServiceImplTests {
     private BookSummaryDto bookSummaryDto;
     private List<BookSummaryDto> bookSummaryDtoList;
 
-    private List<CourseEntity> courseEntityList;
     private List<CourseSummaryDto> courseSummaryDtoList;
     private List<StudentEntity> studentEntityList;
     private List<StudentSummaryDto> studentSummaryList;
@@ -101,11 +98,6 @@ public class StudentServiceImplTests {
                 .title("Professional Track 6")
                 .build();
 
-        courseDto = CourseDto.builder()
-                .code("PTF06")
-                .title("Professional Track 6")
-                .students(null)
-                .build();
 
         studentEntity = StudentEntity.builder()
                 .id(Long.valueOf(1))
@@ -155,7 +147,6 @@ public class StudentServiceImplTests {
 
         bookSummaryDtoList = List.of(bookSummaryDto);
         courseSummaryDtoList = List.of(courseSummaryDto);
-        courseEntityList = List.of(courseEntity);
         studentEntityList = List.of(studentEntity);
         studentSummaryList = List.of(studentSummaryDto);
     }
