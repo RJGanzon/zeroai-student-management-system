@@ -112,7 +112,7 @@ public class StudentServiceImplTests {
                 .build();
 
         studentSummaryDto = StudentSummaryDto.builder()
-                .id(Long.valueOf(1))
+                .id(1L)
                 .name("Ralph Justine T Ganzon")
                 .build();
 
