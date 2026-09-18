@@ -131,7 +131,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDto enrolLStudent(Long id, String code) {
+    public StudentDto enrollStudent(Long id, String code) {
         if (!courseRepository.existsById(code)){
             throw new CourseNotFoundException(code);
         }

@@ -28,7 +28,7 @@ public interface StudentService {
 
     void revokeOwnership(Long id, String isbn);
 
-    StudentDto enrolLStudent(Long id, String code);
+    StudentDto enrollStudent(Long id, String code);
 
     List<CourseSummaryDto> fetchStudentCourses(Long id);
 

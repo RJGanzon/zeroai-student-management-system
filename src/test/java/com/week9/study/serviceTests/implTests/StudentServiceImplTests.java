@@ -11,6 +11,8 @@ import com.week9.study.entities.CourseEntity;
 import com.week9.study.entities.StudentEntity;
 import com.week9.study.exception.book.BookNotFoundException;
 import com.week9.study.exception.book.BookOwnershipNotFoundException;
+import com.week9.study.exception.course.CourseNotFoundException;
+import com.week9.study.exception.course.UnenrollStudentException;
 import com.week9.study.exception.student.StudentNotFoundException;
 import com.week9.study.mapper.impl.BookMapperImpl;
 import com.week9.study.mapper.impl.StudentMapperImpl;
@@ -375,5 +377,117 @@ public class StudentServiceImplTests {
         assertThrows(BookOwnershipNotFoundException.class, () ->
                 studentServiceImpl.revokeOwnership(studentEntity.getId(), bookEntity.getIsbn()));
     }
+
+    //Enroll a student to a course
+    @Test
+    @DisplayName("Enroll student to a course successfully")
+    public void enrollStudentTest() {
+        Set<CourseEntity> emptyCourses = new HashSet<>();
+        studentEntity.setCourses(emptyCourses);
+        when(this.courseRepository.existsById(courseEntity.getCode())).thenReturn(true);
+        when(this.studentRepository.findById(studentEntity.getId())).thenReturn(Optional.of(studentEntity));
+        when(this.courseRepository.getReferenceById(courseEntity.getCode())).thenReturn(courseEntity);
+        when(this.studentDtoMapper.mapTo(studentEntity)).thenReturn(studentDto);
+
+        StudentDto result = studentServiceImpl.enrollStudent(studentEntity.getId(), courseEntity.getCode());
+
+        assertThat(studentEntity.getCourses().contains(courseEntity), equalTo(true));
+        assertThat(result, equalTo(studentDto));
+    }
+
+    @Test
+    @DisplayName("Enroll student course not found exception")
+    public void enrollStudentCourseNotFoundExceptionTest() {
+        String invalidCode = "XX00";
+        when(this.courseRepository.existsById(invalidCode)).thenReturn(false);
+
+        assertThrows(CourseNotFoundException.class, () ->
+                studentServiceImpl.enrollStudent(studentEntity.getId(), invalidCode));
+    }
+
+    @Test
+    @DisplayName("Enroll student student not found exception")
+    public void enrollStudentStudentNotFoundExceptionTest() {
+        Long invalidId = 99L;
+        when(this.courseRepository.existsById(courseEntity.getCode())).thenReturn(true);
+        when(this.studentRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        assertThrows(StudentNotFoundException.class, () ->
+                studentServiceImpl.enrollStudent(invalidId, courseEntity.getCode()));
+    }
+
+    //Fetch a student's courses
+    @Test
+    @DisplayName("fetchStudentCourses Successful")
+    public void fetchStudentCoursesTest() {
+        when(this.studentRepository.findById(studentEntity.getId())).thenReturn(Optional.of(studentEntity));
+        when(this.courseSummaryMapper.mapTo(courseEntity)).thenReturn(courseSummaryDto);
+
+        List<CourseSummaryDto> result = studentServiceImpl.fetchStudentCourses(studentEntity.getId());
+
+        assertThat(result, equalTo(courseSummaryDtoList));
+    }
+
+    @Test
+    @DisplayName("fetchStudentCourses student not found exception")
+    public void fetchStudentCoursesStudentNotFoundExceptionTest() {
+        Long invalidId = 99L;
+        when(this.studentRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        assertThrows(StudentNotFoundException.class, () ->
+                studentServiceImpl.fetchStudentCourses(invalidId));
+    }
+
+    //Unenroll a student from a course
+    @Test
+    @DisplayName("unenrollStudent Successful")
+    public void unenrollStudentTest() {
+        when(this.courseRepository.existsById(courseEntity.getCode())).thenReturn(true);
+        when(this.courseRepository.getReferenceById(courseEntity.getCode())).thenReturn(courseEntity);
+        when(this.studentRepository.findById(studentEntity.getId())).thenReturn(Optional.of(studentEntity));
+
+        studentServiceImpl.unenrollStudent(studentEntity.getId(), courseEntity.getCode());
+
+        assertThat(studentEntity.getCourses().contains(courseEntity), equalTo(false));
+    }
+
+    @Test
+    @DisplayName("unenrollStudent course not found exception")
+    public void unenrollStudentCourseNotFoundExceptionTest() {
+        String invalidCode = "XX00";
+        when(this.courseRepository.existsById(invalidCode)).thenReturn(false);
+
+        assertThrows(CourseNotFoundException.class, () ->
+                studentServiceImpl.unenrollStudent(studentEntity.getId(), invalidCode));
+    }
+
+    @Test
+    @DisplayName("unenrollStudent student not found exception")
+    public void unenrollStudentStudentNotFoundExceptionTest() {
+        Long invalidId = 99L;
+        when(this.courseRepository.existsById(courseEntity.getCode())).thenReturn(true);
+        when(this.courseRepository.getReferenceById(courseEntity.getCode())).thenReturn(courseEntity);
+        when(this.studentRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        assertThrows(StudentNotFoundException.class, () ->
+                studentServiceImpl.unenrollStudent(invalidId, courseEntity.getCode()));
+    }
+
+    @Test
+    @DisplayName("unenrollStudent course not enrolled exception")
+    public void unenrollStudentNotEnrolledExceptionTest() {
+        CourseEntity otherCourse = CourseEntity.builder()
+                .code("OTHER1")
+                .title("Other Course")
+                .build();
+        when(this.courseRepository.existsById(otherCourse.getCode())).thenReturn(true);
+        when(this.courseRepository.getReferenceById(otherCourse.getCode())).thenReturn(otherCourse);
+        when(this.studentRepository.findById(studentEntity.getId())).thenReturn(Optional.of(studentEntity));
+
+        assertThrows(UnenrollStudentException.class, () ->
+                studentServiceImpl.unenrollStudent(studentEntity.getId(), otherCourse.getCode()));
+    }
+
+
 
 }

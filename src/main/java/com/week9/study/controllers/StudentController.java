@@ -80,7 +80,7 @@ public class StudentController {
     //Enroll a student in a course
     @PostMapping(path="/{id}/courses/{code}")
     public ResponseEntity<StudentDto> enrollStudent(@PathVariable("id") Long id, @PathVariable("code") String code) {
-        return new ResponseEntity<>(studentService.enrolLStudent(id, code), HttpStatus.OK);
+        return new ResponseEntity<>(studentService.enrollStudent(id, code), HttpStatus.OK);
     }
 
     //Retrieve all courses of a student
