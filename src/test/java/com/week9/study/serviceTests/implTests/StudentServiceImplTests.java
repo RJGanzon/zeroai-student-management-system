@@ -100,13 +100,13 @@ public class StudentServiceImplTests {
 
 
         studentEntity = StudentEntity.builder()
-                .id(Long.valueOf(1))
+                .id(1L)
                 .name("Ralph Justine T Ganzon")
                 .books(null)
                 .courses(null)
                 .build();
         studentDto = studentDto.builder()
-                .id(Long.valueOf(1))
+                .id(1L)
                 .name("Ralph Justine T Ganzon")
                 .courses(null)
                 .build();
