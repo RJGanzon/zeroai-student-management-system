@@ -1,4 +1,4 @@
-package com.week9.study.serviceTests.implTests;
+package com.week9.study.services.impl;
 
 import com.week9.study.dto.BookDto;
 import com.week9.study.dto.summaries.BookSummaryDto;
@@ -10,7 +10,6 @@ import com.week9.study.mapper.impl.BookMapperImpl;
 import com.week9.study.mapper.impl.summaries.BookSummaryMapperImpl;
 import com.week9.study.mapper.impl.summaries.StudentSummaryMapperImpl;
 import com.week9.study.repositories.BookRepository;
-import com.week9.study.services.impl.BookServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,13 +60,13 @@ public class BookServiceImplTests {
         bookServiceImpl = new BookServiceImpl(bookDtoMapper, bookSummaryDtoMapper, bookRepository, studentSummaryMapper);
 
         studentEntity = StudentEntity.builder()
-                .id(Long.valueOf(1))
+                .id(1L)
                 .name("Ralph Justine T Ganzon")
                 .books(null)
                 .courses(null)
                 .build();
         studentSummaryDto = StudentSummaryDto.builder()
-                .id(Long.valueOf(1))
+                .id(1L)
                 .name("Ralph Justine T Ganzon")
                 .build();
 

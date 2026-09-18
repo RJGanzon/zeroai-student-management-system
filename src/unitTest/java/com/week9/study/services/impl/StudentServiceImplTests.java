@@ -1,4 +1,4 @@
-package com.week9.study.serviceTests.implTests;
+package com.week9.study.services.impl;
 
 import com.week9.study.dto.BookDto;
 import com.week9.study.dto.StudentDto;
@@ -21,7 +21,6 @@ import com.week9.study.mapper.impl.summaries.StudentSummaryMapperImpl;
 import com.week9.study.repositories.BookRepository;
 import com.week9.study.repositories.CourseRepository;
 import com.week9.study.repositories.StudentRepository;
-import com.week9.study.services.impl.StudentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
