@@ -105,7 +105,7 @@ public class StudentServiceImplTests {
                 .books(null)
                 .courses(null)
                 .build();
-        studentDto = studentDto.builder()
+        studentDto = StudentDto.builder()
                 .id(1L)
                 .name("Ralph Justine T Ganzon")
                 .courses(null)
@@ -216,7 +216,7 @@ public class StudentServiceImplTests {
                 books(new HashSet<>(Set.of(bookEntity))).
                 courses(new HashSet<>(Set.of(courseEntity))).
                 build();
-        StudentSummaryDto updatedStudentSummaryDto = studentSummaryDto.builder()
+        StudentSummaryDto updatedStudentSummaryDto = StudentSummaryDto.builder()
                 .id(1L)
                 .name("John Doe")
                 .build();
